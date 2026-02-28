@@ -129,3 +129,10 @@ Antes de produccion:
 - Definir politica de bajas oficial (soft/hard).
 - Usar usuario PG de minimo privilegio.
 - Confirmar SSL (`sslmode=require` si aplica).
+
+---
+## ✍️ Autor
+
+- Desarrollado por **Carlos Garzón**  
+- Software Engineer, Fullstack Web Developer.
+---
