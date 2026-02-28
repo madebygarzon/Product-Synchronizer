@@ -54,21 +54,6 @@ wp altek-sync bootstrap --batch=500
 wp altek-sync run-worker
 ```
 
-## Validacion rapida post-instalacion
-
-1. Crea un producto nuevo en WooCommerce con SKU.
-2. Ejecuta `Procesar cola ahora`.
-3. Verifica en PostgreSQL:
-
-```sql
-select item, nombre, existencia, bloqueado
-from public.inv_items
-where item = 'TU_SKU_NORMALIZADO';
-```
-
-4. Edita el producto y repite para validar `UPDATE`.
-5. Elimina/manda a papelera y valida comportamiento segun `Delete mode`.
-
 ## Panel admin (guia visual)
 
 La pantalla de ajustes muestra:
