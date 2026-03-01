@@ -1,123 +1,40 @@
-# Product Synchronizer (WordPress Plugin)
+# Product Synchronizer — WooCommerce to PostgreSQL
 
-Plugin MVP para sincronizar productos de WooCommerce hacia PostgreSQL (`public.inv_items`) con procesamiento asincrono.
+Asynchronous synchronization plugin that keeps WooCommerce products aligned with PostgreSQL (`public.inv_items`) through event queue processing.
 
-## Flujo
+## Why recruiters should care
+- Real integration challenge solved with robust queue-based design.
+- Focus on data consistency and operational resilience.
+- Suitable for high-volume catalog sync scenarios.
 
-1. Hooks de WooCommerce detectan cambios de producto.
-2. El plugin encola eventos en tabla interna de WordPress.
-3. WP-Cron procesa la cola en lotes.
-4. Se ejecuta `upsert` en PostgreSQL por SKU normalizado.
-5. En baja, aplica soft delete (`bloqueado=TRUE`) o hard delete, segun configuracion.
+## Technical Highlights
+- WooCommerce hooks capture product changes
+- Internal queue table for event processing
+- Batch worker via WP-Cron
+- SKU-based upsert into PostgreSQL
+- Configurable deletion mode (`soft`/`hard`)
 
-## Requisitos
+## Stack
+- WordPress + WooCommerce
+- PHP (`pgsql` extension)
+- PostgreSQL
 
-- WordPress + WooCommerce activos.
-- Extension `pgsql` habilitada en PHP.
-- Acceso de red WordPress -> PostgreSQL.
+## Setup
+1. Install plugin in `wp-content/plugins`
+2. Activate in WordPress
+3. Configure PostgreSQL connection in plugin settings
+4. Run initial bootstrap and queue processing
 
-## Instalacion paso a paso
-
-1. Copia la carpeta `product-synchronizer` en `wp-content/plugins/`.
-2. En WordPress, ve a `Plugins` y activa `Product Synchronizer`.
-3. Verifica prerrequisitos:
-- WooCommerce activo.
-- Extension PHP `pgsql` habilitada.
-- Conectividad de red desde WordPress hacia PostgreSQL.
-4. Ve a `Settings > Product Synchronizer`.
-5. Configura conexion PostgreSQL:
-- `Host`
-- `Port`
-- `Database`
-- `User`
-- `Password`
-- `Schema` (normalmente `public`)
-- `SSL mode` (`disable/prefer/require` segun tu servidor)
-6. Ajusta operacion:
-- `Batch size` (recomendado inicial: `500`)
-- `Cron (min)` (frecuencia de procesamiento automatico)
-- `Delete mode` (`soft` recomendado; `hard` solo si lo necesitas)
-7. Guarda cambios.
-8. Confirma que el panel muestra contadores de WordPress y Altek sin errores de conexion.
-
-## Primer arranque (sincronizacion inicial)
-
-Opcion A (UI recomendada):
-1. Click en `Comparar y encolar faltantes`.
-2. Click en `Procesar cola ahora`.
-3. Revisa `Estado de cola` y `Ultimos 20 eventos` hasta ver `retry=0` y `failed=0`.
-
-Opcion B (WP-CLI):
-
+## CLI Helpers
 ```bash
 wp altek-sync bootstrap --batch=500
 wp altek-sync run-worker
 ```
 
-## Panel admin (guia visual)
+## Operational Benefits
+- Minimizes manual catalog reconciliation
+- Adds visibility into queue health and failures
+- Supports safe rollout with configurable batch + cron behavior
 
-La pantalla de ajustes muestra:
-
-- Total productos WordPress.
-- Total productos Altek (Postgres).
-- Estado de cola (`pending`, `retry`, `processing`, `failed`).
-- Tabla de ultimos 20 eventos (SKU, evento, estado, intentos, error).
-- Boton `Comparar y encolar faltantes`.
-- Boton `Procesar cola ahora`.
-
-## Bootstrap inicial (comparativo por SKU)
-
-Compara los SKUs de WooCommerce contra Postgres y encola solo los faltantes:
-
-```bash
-wp altek-sync bootstrap --batch=500
-```
-
-Procesar worker manualmente (opcional):
-
-```bash
-wp altek-sync run-worker
-```
-
-## Tabla de cola en WP
-
-`{wp_prefix}altek_sync_queue`
-
-Estados:
-- `pending`
-- `processing`
-- `retry`
-- `done`
-- `failed`
-
-## Mapeo v1 Woo -> inv_items
-
-- `item`: `trim(product.sku)`. Si es numérico y tiene menos de 9 dígitos, se completa con ceros a la izquierda hasta 9.
-- `codigobarras`: `product.sku`
-- `nombre`: `product.name`
-- `nombreweb`: `product.name`
-- `existencia`: `product.stock_quantity` (si maneja stock)
-- `costoestandar`: `product.regular_price`
-- `costopromedio`: `product.regular_price`
-- `id_altek`: `product.id` (WordPress ID)
-- `imagen`: URL imagen destacada
-- `bloqueado`: `FALSE` en alta/actualizacion
-- `costoultimacompra` (opcional): `meta _altek_last_cost` si existe
-- `idcategoria` (opcional): primera categoria Woo
-- `observaciones` (opcional): `short_description`
-
-## Recomendaciones de BD
-
-Antes de produccion:
-
-- Crear unicidad por SKU normalizado (`upper(trim(item))`).
-- Definir politica de bajas oficial (soft/hard).
-- Usar usuario PG de minimo privilegio.
-- Confirmar SSL (`sslmode=require` si aplica).
-
----
-## ✍️ Autor
-
-- Desarrollado por **Carlos Garzón**  
-- Software Engineer, Fullstack Web Developer.
----
+## Author
+**Carlos Garzón**
