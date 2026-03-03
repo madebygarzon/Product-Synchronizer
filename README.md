@@ -36,5 +36,13 @@ wp altek-sync run-worker
 - Adds visibility into queue health and failures
 - Supports safe rollout with configurable batch + cron behavior
 
+---
 ## Author
-**Carlos Garzón**
+
+- Created by **Carlos Garzón**
+- Software Engineer, Fullstack Developer.
+---
+
+## Licenses
+
+MIT
