@@ -18,6 +18,8 @@ class Altek_Sync_Mapper {
         $name = (string) $product->get_name();
         $price = $product->get_regular_price() !== '' ? (float) $product->get_regular_price() : 0;
         $stock = $product->managing_stock() ? (float) $product->get_stock_quantity() : 0;
+        $height = method_exists($product, 'get_height') ? $product->get_height() : '';
+        $width = method_exists($product, 'get_width') ? $product->get_width() : '';
 
         $image_id = $product->get_image_id();
         $image_url = $image_id ? wp_get_attachment_url($image_id) : '';
@@ -54,6 +56,14 @@ class Altek_Sync_Mapper {
             : '';
         if ($shortDescription !== '') {
             $payload['observaciones'] = $shortDescription;
+        }
+
+        if ($height !== '' && is_numeric($height)) {
+            $payload['alto'] = (float) $height;
+        }
+
+        if ($width !== '' && is_numeric($width)) {
+            $payload['ancho'] = (float) $width;
         }
 
         return $payload;

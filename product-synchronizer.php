@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Product Synchronizer
  * Description: Sincronizador de productos desde Woocommerce a sistema Altek.
- * Version: 3.0.0
+ * Version: 3.5.0
  * Author: Ing Carlos Garzon
  * Licences: MIT
  */

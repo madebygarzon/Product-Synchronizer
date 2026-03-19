@@ -194,7 +194,7 @@ class Altek_Sync_Pg_Repository {
             $writeData[$column] = $value;
         }
 
-        $optional = ['costoultimacompra', 'idcategoria', 'observaciones'];
+        $optional = ['costoultimacompra', 'idcategoria', 'observaciones', 'alto', 'ancho'];
         foreach ($optional as $column) {
             if (!isset($columns[$column]) || !array_key_exists($column, $product)) {
                 continue;
